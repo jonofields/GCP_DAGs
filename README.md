@@ -16,8 +16,8 @@ correlation to arrests? (while taking the crime rate into account)
 <p>Create two functions within lib to upload data to a bucket - 
   tried looping through data directory within one function - settled on individual functions</p>
 <p>DAG runs succesfully, data uploaded</p>
+<p>Create bash commands to load data into BigQuery</p>
 
 <h3>To Do:</h3>
-<p>Bash scripts to import data into BigQuery (does a schema need to be defined or will --autodetect do the trick?(simple csv files so it should))</p>
 <p>SQL queries to calculate crime rate, avg sal, yearly funding, insights on types of crime, insights on types of arrests</p>
 <p>Experiment with data vis to create a map of crime.  Look into mapping long/lat.</p>
