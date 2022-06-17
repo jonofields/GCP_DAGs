@@ -8,7 +8,7 @@ default_dag_args = {
     'email_on_failure' : False,
     'email_on_retry' : False,
     'retries' : 1,
-    'retry_delay' : timedelta(minutes=5),
+    'retry_delay' : timedelta(minutes=1),
     'start_date' : datetime(2022,6,14),
     'project_id' : 'pipeline-builds'
     
@@ -55,8 +55,18 @@ with models.DAG(
         python_callable = upload_file_arrests
     )
 
+    crime_to_bq = bash_operator.BashOperator(
+        task_id = 'crime_bq',
+        bash_command = "bq load --autodetect --source_format=CSV --allow_quoted_newlines chicago_data.crime gs://us-central1-test-run-ner-da18cc30-bucket/data/chicago_crime.csv"
+    )
+
+    arrests_to_bq = bash_operator.BashOperator(
+        task_id = 'arrests_bq',
+        bash_command = "bq load --autodetect --source_format=CSV --allow_quoted_newlines chicago_data.arrests gs://us-central1-test-run-ner-da18cc30-bucket/data/chicago_arrests.csv"
+    )
+
     
 
-    get_data_crime >> crime_to_storage >> get_data_arrests >> arrests_to_storage 
+    get_data_crime >> crime_to_storage >> get_data_arrests >> arrests_to_storage >> crime_to_bq >> arrests_to_bq
 
 
