@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
-
 from airflow import models
-
 
 
 default_dag_args = {
@@ -18,7 +16,7 @@ default_dag_args = {
 
 with models.DAG(
     'crime_pipeline',
-    schedule_interval=timedelta(days=3),
+    schedule_interval=timedelta(weeks=1),
     default_args = default_dag_args) as dag:
     
     from airflow.operators import bash_operator
@@ -27,22 +25,38 @@ with models.DAG(
     import sys
     import os
 
+
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-    from dags_lib.crime_object import upload_file
+    from dags_lib.crime_object import upload_file_crime, upload_file_arrests
 
-    get_data = bash_operator.BashOperator(
+
+    get_data_crime = bash_operator.BashOperator(
         task_id = 'chicago_crime',
         bash_command = """curl -o "/home/airflow/gcs/data/chicago_crime.csv" -X GET https://data.cityofchicago.org/resource/ijzp-q8t2.csv"""
     )
 
 
-    data_to_storage = python_operator.PythonOperator(
+    crime_to_storage = python_operator.PythonOperator(
         task_id = 'crime_to_storage',
-        python_callable = upload_file
+        python_callable = upload_file_crime
     )
 
-    get_data >> data_to_storage
+
+    get_data_arrests = bash_operator.BashOperator(
+        task_id = 'chicago_arrests',
+        bash_command = """curl -o "/home/airflow/gcs/data/chicago_arrests.csv" -X GET https://data.cityofchicago.org/resource/dpt3-jri9.csv"""
+    )
+
+
+    arrests_to_storage = python_operator.PythonOperator(
+        task_id = 'arrests_to_storage',
+        python_callable = upload_file_arrests
+    )
+
+    
+
+    get_data_crime >> crime_to_storage >> get_data_arrests >> arrests_to_storage 
 
 
