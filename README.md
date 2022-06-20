@@ -19,5 +19,6 @@ correlation to arrests? (while taking the crime rate into account)
 <p>Create bash commands to load data into BigQuery</p>
 
 <h3>To Do:</h3>
+<p> Redo all completed with funding, yearly budget reports for policing (just add to DAG and lib)</p>
 <p>SQL queries to calculate crime rate, avg sal, yearly funding, insights on types of crime, insights on types of arrests</p>
 <p>Experiment with data vis to create a map of crime.  Look into mapping long/lat.</p>
