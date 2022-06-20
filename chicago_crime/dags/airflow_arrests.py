@@ -9,19 +9,18 @@ default_dag_args = {
     'email_on_retry' : False,
     'retries' : 1,
     'retry_delay' : timedelta(minutes=1),
-    'start_date' : datetime(2022,6,14),
+    'start_date' : datetime(2022,6,21),
     'project_id' : 'pipeline-builds'
     
 }
 
 with models.DAG(
-    'crime_pipeline',
+    'arrests_pipeline',
     schedule_interval=timedelta(weeks=1),
     default_args = default_dag_args) as dag:
     
     from airflow.operators import bash_operator
     from airflow.operators import python_operator
-    from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
     import sys
     import os
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
